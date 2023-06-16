@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/carrb-moj/blob2share/issues"
   },
-  "homepage": "https://github.com/carrb-moj/blob2share#readme"
+  "homepage": "https://github.com/carrb-moj/blob2share#readme",
+  "dependencies": {
+    "applicationinsights": "^2.7.0"
+  }
 }

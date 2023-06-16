@@ -36,13 +36,21 @@ function copyBlobFile(blobURL, container, file, SAS, dest){
     execSync(cmd)
 }
 
-const blobUrl = 'https://itbcmercury.blob.core.windows.net'
-const container = 'sfr'
-const SAS = ''
-const dest = "/mnt/mercury/"
-const files = listBlobFile(blobUrl, container, SAS)
-//console.log(files)
-files.forEach((f) => {
-    // console.log(f)
-    copyBlobFile(blobUrl, container, f, SAS, dest)
-})
+if ((process.env.SAS === undefined) || (process.env.APPINSIGHTS === undefined)) {
+    console.log("Please set SAS and APPINSIGHTS environment variable")
+}
+else {
+    appInsights.setup("[your connection string]").start();
+    const blobUrl = 'https://itbcmercury.blob.core.windows.net'
+    const container = 'sfr'
+    const SAS = ''
+    const dest = "/mnt/mercury/"
+    
+    const files = listBlobFile(blobUrl, container, SAS)
+    console.log(files)
+    files.forEach((f) => {
+        // console.log(f)
+        copyBlobFile(blobUrl, container, f, SAS, dest)
+    })
+}
+
