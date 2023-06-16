@@ -36,9 +36,6 @@ function copyBlobFile(blobURL, container, file, SAS, dest){
     execSync(cmd)
 }
 
-//getFileName("INFO: test.txt;  Content Length: 6.00 B")
-//listBlobFile('https://itbcmercury.blob.core.windows.net/sfr?sp=racwdl&st=2023-06-16T06:14:22Z&se=2023-06-17T14:14:22Z&spr=https&sv=2022-11-02&sr=c&sig=nUthYG%2BMsg5ClepDemxmiMEMr9qpo5Zw2xHxjzRRL30%3D')
-
 const blobUrl = 'https://itbcmercury.blob.core.windows.net'
 const container = 'sfr'
 const SAS = ''
