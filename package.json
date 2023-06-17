@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/carrb-moj/blob2share#readme",
   "dependencies": {
-    "applicationinsights": "^2.7.0"
+    "applicationinsights": "^2.7.0",
+    "pino": "^8.14.1"
   }
 }

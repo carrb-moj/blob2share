@@ -1,5 +1,8 @@
+const appInsights = require('applicationinsights');
 const fs = require('fs')
+const util = require('util')
 const { execSync } = require('child_process')
+const { join } = require('path')
 
 function getFileName(line) {
     let file = line.split("INFO: ")[1]
@@ -33,24 +36,111 @@ function copyBlobFile(blobURL, container, file, SAS, dest){
     const URL = `${blobURL}/${container}/${file}${SAS}`
     //console.log(URL)
     const cmd = `azcopy copy "${URL}" "${dest}"`
-    execSync(cmd)
+    try {
+        const res = execSync(cmd)
+        console.log(res.toString())
+    }
+    catch(err){
+        console.error(`Error running command - ${cmd}`)
+        console.error(err.toString())
+    }
 }
 
-if ((process.env.SAS === undefined) || (process.env.APPINSIGHTS === undefined)) {
-    console.log("Please set SAS and APPINSIGHTS environment variable")
+function removeBlobFile(blobURL, container, file, SAS, dest){
+    const URL = `${blobURL}/${container}/${file}${SAS}`
+    //console.log(URL)
+    const cmd = `azcopy remove "${URL}"`
+    try {
+        const res = execSync(cmd)
+        console.log(res.toString())
+    }
+    catch(err){
+        console.error(`Error running command - ${cmd}`)
+        console.error(err.toString())
+    }
 }
-else {
-    appInsights.setup("[your connection string]").start();
-    const blobUrl = 'https://itbcmercury.blob.core.windows.net'
-    const container = 'sfr'
-    const SAS = ''
-    const dest = "/mnt/mercury/"
-    
-    const files = listBlobFile(blobUrl, container, SAS)
-    console.log(files)
-    files.forEach((f) => {
-        // console.log(f)
-        copyBlobFile(blobUrl, container, f, SAS, dest)
+
+function confirmFileCopy(dest, file){
+    try {
+        const list = fs.readdirSync(dest)
+        let blnSuccess = false
+        list.forEach((item) => {
+            if (item === file){
+                blnSuccess = true
+            }
+        })
+        if (blnSuccess){
+            return true
+        }
+        else {
+            return false
+        }
+    }
+    catch {
+        throw(`Error reading directory ${dest}`)
+    }
+}
+
+function sleep (duration) {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => resolve(), (duration * 1000));
     })
 }
 
+async function main(delay) {
+    console.log(`Date now is ${Date()}`);
+    const blobUrl = 'https://itbcmercury.blob.core.windows.net'
+    const container = 'sfr'
+    const SAS = process.env.SAS
+    const dest =  '\\\\dell-lat\\mercury' //"/mnt/mercury/"
+    const files = listBlobFile(blobUrl, container, SAS)
+    if (files.length === 0){
+        console.log("No files found in blob storage")
+    }
+    files.forEach((f) => {
+        console.log(`Found file ${f}`)
+        copyBlobFile(blobUrl, container, f, SAS, dest)
+        if (confirmFileCopy(dest, f)){
+            console.log(`${f} copied successfully to ${dest}`)
+            removeBlobFile(blobUrl, container, f, SAS, dest)
+        }
+        else {
+            console.error(`Failed copying ${f} to ${dest}`)
+        }
+    })
+    await sleep(delay);
+    console.log(`Date now is ${Date()}`);
+}
+
+async function run(iteration, delay){
+    while (iteration > 0) {
+        await main(delay);
+        iteration--
+    }
+}
+
+
+if ((process.env.SAS === undefined) || (process.env.APPLICATIONINSIGHTS_CONNECTION_STRING === undefined)) {
+    console.log("Please set SAS and APPLICATIONINSIGHTS_CONNECTION_STRING environment variable")
+}
+else {
+    appInsights.setup().start()
+
+    // const logFile = fs.createWriteStream(join(__dirname, "blob2share.access.log"), { flags: 'a' })
+    // const errorFile = fs.createWriteStream(join(__dirname, "blob2share.error.log"), { flags: 'a' })
+    //   // Or 'w' to truncate the file every time the process starts.
+    // const logStdout = process.stdout
+    // const logStderr = process.stderr;
+    
+    // console.log = function () {
+    //   logFile.write(util.format.apply(null, arguments) + '\n');
+    //   logStdout.write(util.format.apply(null, arguments) + '\n');
+    // }
+
+    // console.error = function () {
+    //     logFile.write(util.format.apply(null, arguments) + '\n');
+    //     logStderr.write(util.format.apply(null, arguments) + '\n');
+    // }
+
+    run(1, 30)
+}
