@@ -3,27 +3,38 @@ const fs = require('fs')
 const util = require('util')
 const { execSync } = require('child_process')
 const { join } = require('path')
+const winston = require('winston');
+const errorlog = join(__dirname, "error.log")
+const applog = join(__dirname, "app.log")
+
+const logger = winston.createLogger({
+    level: "info",
+    format: winston.format.combine(
+      winston.format.timestamp(),
+      winston.format.json()
+    ),
+    transports: [
+      new winston.transports.File({ filename: errorlog, level: "warn" }),
+      new winston.transports.File({ filename: applog }),
+    ],
+  });
 
 function getFileName(line) {
     let file = line.split("INFO: ")[1]
     file = file.split(";")[0]
-    //console.log(file)
+    logger.debug(file)
     return file
 }
 
 function listBlobFile(blobURL, container, SAS){
     const URL = `${blobURL}/${container}${SAS}`
-    //console.log(`.${URL}.`)
+    logger.debug(`.${URL}.`)
     const cmd = `azcopy list "${URL}"`
     const res = execSync(cmd)
-    //console.log(res.toString())
 
     let myObject = res.toString().split("\n")
-    //console.log(typeof(res))
     const myArray = []
     myObject.forEach((line) => {
-        //console.log((line))
-        //console.log("line end")
         if (line.length > 0) {
             const filename = getFileName(line.toString())
             myArray.push(filename)
@@ -34,11 +45,11 @@ function listBlobFile(blobURL, container, SAS){
 
 function copyBlobFile(blobURL, container, file, SAS, dest){
     const URL = `${blobURL}/${container}/${file}${SAS}`
-    //console.log(URL)
+    logger.debug(URL)
     const cmd = `azcopy copy "${URL}" "${dest}"`
     try {
         const res = execSync(cmd)
-        console.log(res.toString())
+        logger.info(res.toString())
     }
     catch(err){
         console.error(`Error running command - ${cmd}`)
@@ -48,11 +59,11 @@ function copyBlobFile(blobURL, container, file, SAS, dest){
 
 function removeBlobFile(blobURL, container, file, SAS, dest){
     const URL = `${blobURL}/${container}/${file}${SAS}`
-    //console.log(URL)
+    //logger.info(URL)
     const cmd = `azcopy remove "${URL}"`
     try {
         const res = execSync(cmd)
-        console.log(res.toString())
+        logger.info(res.toString())
     }
     catch(err){
         console.error(`Error running command - ${cmd}`)
@@ -77,6 +88,7 @@ function confirmFileCopy(dest, file){
         }
     }
     catch {
+        logger.error(`Error reading directory ${dest}`)
         throw(`Error reading directory ${dest}`)
     }
 }
@@ -88,28 +100,28 @@ function sleep (duration) {
 }
 
 async function main(delay) {
-    console.log(`Date now is ${Date()}`);
+    logger.info("Started");
     const blobUrl = 'https://itbcmercury.blob.core.windows.net'
     const container = 'sfr'
     const SAS = process.env.SAS
     const dest =  '\\\\dell-lat\\mercury' //"/mnt/mercury/"
     const files = listBlobFile(blobUrl, container, SAS)
     if (files.length === 0){
-        console.log("No files found in blob storage")
+        logger.info("No files found in blob storage")
     }
     files.forEach((f) => {
-        console.log(`Found file ${f}`)
+        logger.info(`Found file ${f}`)
         copyBlobFile(blobUrl, container, f, SAS, dest)
         if (confirmFileCopy(dest, f)){
-            console.log(`${f} copied successfully to ${dest}`)
+            logger.info(`${f} copied successfully to ${dest}`)
             removeBlobFile(blobUrl, container, f, SAS, dest)
         }
         else {
-            console.error(`Failed copying ${f} to ${dest}`)
+            logger.error(`Failed copying ${f} to ${dest}`)
         }
     })
     await sleep(delay);
-    console.log(`Date now is ${Date()}`);
+    logger.info("Iteration complete");
 }
 
 async function run(iteration, delay){
@@ -121,26 +133,9 @@ async function run(iteration, delay){
 
 
 if ((process.env.SAS === undefined) || (process.env.APPLICATIONINSIGHTS_CONNECTION_STRING === undefined)) {
-    console.log("Please set SAS and APPLICATIONINSIGHTS_CONNECTION_STRING environment variable")
+    logger.error("SAS and APPLICATIONINSIGHTS_CONNECTION_STRING environment variable not set")
 }
 else {
     appInsights.setup().start()
-
-    // const logFile = fs.createWriteStream(join(__dirname, "blob2share.access.log"), { flags: 'a' })
-    // const errorFile = fs.createWriteStream(join(__dirname, "blob2share.error.log"), { flags: 'a' })
-    //   // Or 'w' to truncate the file every time the process starts.
-    // const logStdout = process.stdout
-    // const logStderr = process.stderr;
-    
-    // console.log = function () {
-    //   logFile.write(util.format.apply(null, arguments) + '\n');
-    //   logStdout.write(util.format.apply(null, arguments) + '\n');
-    // }
-
-    // console.error = function () {
-    //     logFile.write(util.format.apply(null, arguments) + '\n');
-    //     logStderr.write(util.format.apply(null, arguments) + '\n');
-    // }
-
     run(1, 30)
 }

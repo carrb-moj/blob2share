@@ -19,6 +19,6 @@
   "homepage": "https://github.com/carrb-moj/blob2share#readme",
   "dependencies": {
     "applicationinsights": "^2.7.0",
-    "pino": "^8.14.1"
+    "winston": "^3.9.0"
   }
 }
