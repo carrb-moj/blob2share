@@ -101,7 +101,8 @@ function sleep (duration) {
 
 async function main(delay) {
     logger.info("Started");
-    const blobUrl = 'https://itbcmercury.blob.core.windows.net'
+    const STORAGEACCOUNT = process.env.STORAGEACCOUNT
+    const blobUrl = `https://${STORAGEACCOUNT}.blob.core.windows.net`
     const container = 'sfr'
     const SAS = process.env.SAS
     const dest =  "/mnt/mercury/"
