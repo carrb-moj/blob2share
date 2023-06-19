@@ -52,8 +52,8 @@ function copyBlobFile(blobURL, container, file, SAS, dest){
         logger.info(res.toString())
     }
     catch(err){
-        console.error(`Error running command - ${cmd}`)
-        console.error(err.toString())
+        logger.error(`Error running command - ${cmd}`)
+        logger.error(err.toString())
     }
 }
 
@@ -66,8 +66,8 @@ function removeBlobFile(blobURL, container, file, SAS, dest){
         logger.info(res.toString())
     }
     catch(err){
-        console.error(`Error running command - ${cmd}`)
-        console.error(err.toString())
+        logger.error(`Error running command - ${cmd}`)
+        logger.error(err.toString())
     }
 }
 
@@ -101,10 +101,10 @@ function sleep (duration) {
 
 async function main(delay) {
     logger.info("Started");
-    const blobUrl = 'https://itbcmercury.blob.core.windows.net'
+    const blobUrl = 'https://pdmercurysfr.blob.core.windows.net'
     const container = 'sfr'
     const SAS = process.env.SAS
-    const dest =  '\\\\dell-lat\\mercury' //"/mnt/mercury/"
+    const dest =  "/mnt/mercury/"
     const files = listBlobFile(blobUrl, container, SAS)
     if (files.length === 0){
         logger.info("No files found in blob storage")
