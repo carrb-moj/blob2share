@@ -116,7 +116,7 @@ function main() {
         copyBlobFile(blobUrl, container, f, SAS, dest)
         if (confirmFileCopy(dest, f)){
             logger.info(`${f} copied successfully to ${dest}`)
-            removeBlobFile(blobUrl, container, f, SAS, dest)
+            //removeBlobFile(blobUrl, container, f, SAS, dest)
         }
         else {
             logger.error(`Failed copying ${f} to ${dest}`)
