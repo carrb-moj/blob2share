@@ -116,14 +116,13 @@ function main() {
         copyBlobFile(blobUrl, container, f, SAS, dest)
         if (confirmFileCopy(dest, f)){
             logger.info(`${f} copied successfully to ${dest}`)
-            //removeBlobFile(blobUrl, container, f, SAS, dest)
         }
         else {
             logger.error(`Failed copying ${f} to ${dest}`)
         }
         copyBlobFile(blobUrl, container, f, SAS, destdr)
         if (confirmFileCopy(dest, f)){
-            logger.info(`${f} copied successfully to ${destrd}`)
+            logger.info(`${f} copied successfully to ${destdr}`)
             removeBlobFile(blobUrl, container, f, SAS, dest)
         }
         else {
@@ -131,25 +130,14 @@ function main() {
         }
 
     })
-    //await sleep(delay);
     logger.info("Iteration complete");
 }
-
-function run(iteration, delay){
-    while (iteration > 0) {
-        main(delay)
-            .catch(err => logger.error(err))
-        iteration--
-    }
-}
-
 
 if ((process.env.SAS === undefined) || (process.env.APPLICATIONINSIGHTS_CONNECTION_STRING === undefined)) {
     logger.error("SAS and APPLICATIONINSIGHTS_CONNECTION_STRING environment variable not set")
 }
 else {
-    //appInsights.setup().start()
-    //run(2, 60)
+    appInsights.setup().start()
     setInterval(() => {
         main()
     }, 60000)
