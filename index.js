@@ -135,9 +135,9 @@ async function main(delay) {
     logger.info("Iteration complete");
 }
 
-async function run(iteration, delay){
+function run(iteration, delay){
     while (iteration > 0) {
-        await main(delay)
+        main(delay)
             .catch(err => logger.error(err))
         iteration--
     }
@@ -149,5 +149,5 @@ if ((process.env.SAS === undefined) || (process.env.APPLICATIONINSIGHTS_CONNECTI
 }
 else {
     appInsights.setup().start()
-    run(1, 60)
+    run(2, 60)
 }
