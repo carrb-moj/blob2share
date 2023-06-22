@@ -46,7 +46,7 @@ function listBlobFile(blobURL, container, SAS){
 function copyBlobFile(blobURL, container, file, SAS, dest){
     const URL = `${blobURL}/${container}/${file}${SAS}`
     logger.debug(URL)
-    const cmd = `azcopy copy "${URL}" "${dest}"`
+    const cmd = `sudo azcopy copy "${URL}" "${dest}"`
     try {
         const res = execSync(cmd)
         logger.info(res.toString())
