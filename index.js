@@ -139,5 +139,5 @@ if ((process.env.SAS === undefined) || (process.env.APPLICATIONINSIGHTS_CONNECTI
 }
 else {
     appInsights.setup().start()
-    run(1, 30)
+    run(1, 60)
 }
