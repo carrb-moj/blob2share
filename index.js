@@ -99,40 +99,43 @@ function sleep (duration) {
     })
 }
 
-async function main(delay) {
-    logger.info("Started");
-    const STORAGEACCOUNT = process.env.STORAGEACCOUNT
-    const blobUrl = `https://${STORAGEACCOUNT}.blob.core.windows.net`
-    const container = 'sfr'
-    const SAS = process.env.SAS
-    const dest =  "/mnt/mercury/"
-    const destdr =  "/mnt/mercurydr/"
-    const files = listBlobFile(blobUrl, container, SAS)
-    if (files.length === 0){
-        logger.info("No files found in blob storage")
-    }
-    files.forEach((f) => {
-        logger.info(`Found file ${f}`)
-        copyBlobFile(blobUrl, container, f, SAS, dest)
-        if (confirmFileCopy(dest, f)){
-            logger.info(`${f} copied successfully to ${dest}`)
-            removeBlobFile(blobUrl, container, f, SAS, dest)
+function main(delay) {
+    setInterval(() => {
+        logger.info("Started");
+        const STORAGEACCOUNT = process.env.STORAGEACCOUNT
+        const blobUrl = `https://${STORAGEACCOUNT}.blob.core.windows.net`
+        const container = 'sfr'
+        const SAS = process.env.SAS
+        const dest =  "/mnt/mercury/"
+        const destdr =  "/mnt/mercurydr/"
+        const files = listBlobFile(blobUrl, container, SAS)
+        if (files.length === 0){
+            logger.info("No files found in blob storage")
         }
-        else {
-            logger.error(`Failed copying ${f} to ${dest}`)
-        }
-        // copyBlobFile(blobUrl, container, f, SAS, destdr)
-        // if (confirmFileCopy(dest, f)){
-        //     logger.info(`${f} copied successfully to ${destrd}`)
-        //     removeBlobFile(blobUrl, container, f, SAS, dest)
-        // }
-        // else {
-        //     logger.error(`Failed copying ${f} to ${destdr}`)
-        // }
+        files.forEach((f) => {
+            logger.info(`Found file ${f}`)
+            copyBlobFile(blobUrl, container, f, SAS, dest)
+            if (confirmFileCopy(dest, f)){
+                logger.info(`${f} copied successfully to ${dest}`)
+                removeBlobFile(blobUrl, container, f, SAS, dest)
+            }
+            else {
+                logger.error(`Failed copying ${f} to ${dest}`)
+            }
+            // copyBlobFile(blobUrl, container, f, SAS, destdr)
+            // if (confirmFileCopy(dest, f)){
+            //     logger.info(`${f} copied successfully to ${destrd}`)
+            //     removeBlobFile(blobUrl, container, f, SAS, dest)
+            // }
+            // else {
+            //     logger.error(`Failed copying ${f} to ${destdr}`)
+            // }
+    
+        })
+        //await sleep(delay);
+        logger.info("Iteration complete");
+    }, delay)
 
-    })
-    await sleep(delay);
-    logger.info("Iteration complete");
 }
 
 function run(iteration, delay){
@@ -149,5 +152,6 @@ if ((process.env.SAS === undefined) || (process.env.APPLICATIONINSIGHTS_CONNECTI
 }
 else {
     appInsights.setup().start()
-    run(2, 60)
+    //run(2, 60)
+    main(60)
 }
