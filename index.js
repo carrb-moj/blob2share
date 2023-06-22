@@ -152,5 +152,5 @@ else {
     //run(2, 60)
     setInterval(() => {
         main()
-    }, 60)
+    }, 60000)
 }
