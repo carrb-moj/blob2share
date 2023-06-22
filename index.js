@@ -106,6 +106,7 @@ async function main(delay) {
     const container = 'sfr'
     const SAS = process.env.SAS
     const dest =  "/mnt/mercury/"
+    const destdr =  "/mnt/mercurydr/"
     const files = listBlobFile(blobUrl, container, SAS)
     if (files.length === 0){
         logger.info("No files found in blob storage")
@@ -115,11 +116,20 @@ async function main(delay) {
         copyBlobFile(blobUrl, container, f, SAS, dest)
         if (confirmFileCopy(dest, f)){
             logger.info(`${f} copied successfully to ${dest}`)
-            removeBlobFile(blobUrl, container, f, SAS, dest)
+            //removeBlobFile(blobUrl, container, f, SAS, dest)
         }
         else {
             logger.error(`Failed copying ${f} to ${dest}`)
         }
+        copyBlobFile(blobUrl, container, f, SAS, destdr)
+        if (confirmFileCopy(dest, f)){
+            logger.info(`${f} copied successfully to ${destrd}`)
+            removeBlobFile(blobUrl, container, f, SAS, dest)
+        }
+        else {
+            logger.error(`Failed copying ${f} to ${destdr}`)
+        }
+
     })
     await sleep(delay);
     logger.info("Iteration complete");
