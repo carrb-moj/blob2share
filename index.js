@@ -105,7 +105,7 @@ async function main(delay) {
     const blobUrl = `https://${STORAGEACCOUNT}.blob.core.windows.net`
     const container = 'sfr'
     const SAS = process.env.SAS
-    const dest =  "/mnt/mercury"
+    const dest =  "/mnt/mercury/"
     const files = listBlobFile(blobUrl, container, SAS)
     if (files.length === 0){
         logger.info("No files found in blob storage")
