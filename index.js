@@ -121,14 +121,14 @@ function main() {
         else {
             logger.error(`Failed copying ${f} to ${dest}`)
         }
-        // copyBlobFile(blobUrl, container, f, SAS, destdr)
-        // if (confirmFileCopy(dest, f)){
-        //     logger.info(`${f} copied successfully to ${destrd}`)
-        //     removeBlobFile(blobUrl, container, f, SAS, dest)
-        // }
-        // else {
-        //     logger.error(`Failed copying ${f} to ${destdr}`)
-        // }
+        copyBlobFile(blobUrl, container, f, SAS, destdr)
+        if (confirmFileCopy(dest, f)){
+            logger.info(`${f} copied successfully to ${destrd}`)
+            removeBlobFile(blobUrl, container, f, SAS, dest)
+        }
+        else {
+            logger.error(`Failed copying ${f} to ${destdr}`)
+        }
 
     })
     //await sleep(delay);
