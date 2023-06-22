@@ -148,7 +148,7 @@ if ((process.env.SAS === undefined) || (process.env.APPLICATIONINSIGHTS_CONNECTI
     logger.error("SAS and APPLICATIONINSIGHTS_CONNECTION_STRING environment variable not set")
 }
 else {
-    appInsights.setup().start()
+    //appInsights.setup().start()
     //run(2, 60)
     setInterval(() => {
         main()
