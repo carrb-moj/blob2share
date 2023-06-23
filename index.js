@@ -1,11 +1,10 @@
 const appInsights = require('applicationinsights');
 const fs = require('fs')
-const util = require('util')
 const { execSync } = require('child_process')
 const { join } = require('path')
 const winston = require('winston');
-const errorlog = join(__dirname, "error.log")
-const applog = join(__dirname, "app.log")
+const errorlog = join("/var/log/blob2share", "mercury_copy_error.log")
+const applog = join("/var/log/blob2share", "mercury_copy.log")
 
 const logger = winston.createLogger({
     level: "info",
