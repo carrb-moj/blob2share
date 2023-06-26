@@ -40,4 +40,4 @@ jobs:
         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
     - name: create tmp file
-      run: az vm run-command invoke --resource-group "RG-Mercury" --scripts "touch /tmp/hellfromGA.txt" --name "pd1" --commandid RunShellScript
+      run: az vm run-command invoke --resource-group "RG-Mercury" --scripts "touch /tmp/hellfromGA.txt" --name "pd1" --command-id RunShellScript
