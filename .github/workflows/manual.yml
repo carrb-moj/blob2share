@@ -29,6 +29,6 @@ jobs:
     steps:
     # Runs a single command using the runners shell
     - name: az login
-      run: az login--identity --username ga1
+      run: az login --identity --username ga1
     - name: create tmp file
       run: az vm run-command invoke --resource-group "RG-Mercury" --scripts "touch /tmp/hellfromGA.txt" --name "pd1" --commandid RunShellScript
