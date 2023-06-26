@@ -2,6 +2,10 @@
 
 name: Manual workflow
 
+permissions:
+  id-token: write
+  contents: read
+
 # Controls when the action will run. Workflow runs when manually triggered using the UI
 # or API.
 on:
@@ -24,11 +28,16 @@ jobs:
   touch:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
+    environment: prod
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     # Runs a single command using the runners shell
-    - name: az login
-      run: az login --identity
+    - name: Log into Azure
+      uses: azure/login@v1
+      with:
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
     - name: create tmp file
       run: az vm run-command invoke --resource-group "RG-Mercury" --scripts "touch /tmp/hellfromGA.txt" --name "pd1" --commandid RunShellScript
