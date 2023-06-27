@@ -1,0 +1,43 @@
+# This is a basic workflow that is manually triggered
+
+name: Manual workflow
+
+permissions:
+  id-token: write
+  contents: read
+
+# Controls when the action will run. Workflow runs when manually triggered using the UI
+# or API.
+on:
+  workflow_dispatch:
+    # Inputs the workflow accepts.
+    inputs:
+      name:
+        # Friendly description to be shown in the UI instead of 'name'
+        description: 'Person to greet'
+        # Default value if no value is explicitly provided
+        default: 'World'
+        # Input has to be provided for the workflow to run
+        required: true
+        # The data type of the input
+        type: string
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "greet"
+  touch:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    environment: prod
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    # Runs a single command using the runners shell
+    - name: Log into Azure
+      uses: azure/login@v1
+      with:
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+    - name: create tmp file
+      run: az vm run-command invoke --resource-group "RG-Mercury" --scripts "touch /tmp/hellfromGA.txt" --name "pd1" --command-id RunShellScript
