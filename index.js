@@ -1,4 +1,5 @@
 const appInsights = require('applicationinsights');
+const telemetry = applicationInsights.defaultClient;
 const fs = require('fs')
 const { execSync } = require('child_process')
 const { join } = require('path')
@@ -94,7 +95,7 @@ function confirmFileCopy(dest, file){
 
 function main() {
     logger.info("Started");
-    appInsights.trackEvent({name:"Started"})
+    telemetry.trackEvent({name:"Started"})
     const STORAGEACCOUNT = process.env.STORAGEACCOUNT
     const blobUrl = `https://${STORAGEACCOUNT}.blob.core.windows.net`
     const container = 'sfr'
