@@ -1,5 +1,5 @@
 const appInsights = require('applicationinsights');
-const telemetry = applicationInsights.defaultClient;
+const telemetry = appInsights.defaultClient;
 const fs = require('fs')
 const { execSync } = require('child_process')
 const { join } = require('path')
