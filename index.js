@@ -95,7 +95,7 @@ function confirmFileCopy(dest, file){
 
 function main() {
     logger.info("Started");
-    telemetry.trackEvent({name:"Started"})
+    telemetry.trackEvent({name: "Started"})
     const STORAGEACCOUNT = process.env.STORAGEACCOUNT
     const blobUrl = `https://${STORAGEACCOUNT}.blob.core.windows.net`
     const container = 'sfr'
