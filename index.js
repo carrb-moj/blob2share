@@ -92,14 +92,9 @@ function confirmFileCopy(dest, file){
     }
 }
 
-function sleep (duration) {
-    return new Promise((resolve, reject) => {
-        setTimeout(() => resolve(), (duration * 1000));
-    })
-}
-
 function main() {
     logger.info("Started");
+    appInsights.trackEvent({name:"Started"})
     const STORAGEACCOUNT = process.env.STORAGEACCOUNT
     const blobUrl = `https://${STORAGEACCOUNT}.blob.core.windows.net`
     const container = 'sfr'
