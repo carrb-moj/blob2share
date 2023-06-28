@@ -95,6 +95,7 @@ function confirmFileCopy(dest, file){
 
 function main() {
     logger.info("Started");
+    appInsights.defaultClient.trackEvent({name: "blob2share", properties: {customProperty: "running"}})
     //telemetry.trackEvent({name: "Started"})
     const STORAGEACCOUNT = process.env.STORAGEACCOUNT
     const blobUrl = `https://${STORAGEACCOUNT}.blob.core.windows.net`
