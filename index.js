@@ -22,7 +22,6 @@ const logger = winston.createLogger({
 function getFileName(line) {
     let file = line.split("INFO: ")[1]
     file = file.split(";")[0]
-    logger.debug(file)
     return file
 }
 
