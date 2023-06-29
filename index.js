@@ -1,5 +1,4 @@
 const appInsights = require('applicationinsights');
-//const telemetry = appInsights.defaultClient;
 const fs = require('fs')
 const { execSync } = require('child_process')
 const { join } = require('path')
@@ -95,7 +94,6 @@ function confirmFileCopy(dest, file){
 function main() {
     logger.info("Started");
     appInsights.defaultClient.trackEvent({name: "blob2share", properties: {customProperty: "running"}})
-    //telemetry.trackEvent({name: "Started"})
     const STORAGEACCOUNT = process.env.STORAGEACCOUNT
     const blobUrl = `https://${STORAGEACCOUNT}.blob.core.windows.net`
     const container = 'sfr'
@@ -132,9 +130,9 @@ if ((process.env.SAS === undefined) || (process.env.APPLICATIONINSIGHTS_CONNECTI
     logger.error("SAS and APPLICATIONINSIGHTS_CONNECTION_STRING environment variable not set")
 }
 else {
-    appInsights.setup()
-      .setSendLiveMetrics(true)
-      .start()
+    appInsights.setup().setSendLiveMetrics(true)
+    appInsights.defaultClient.context.tags[appInsights.defaultClient.context.keys.cloudRole] = 'blob2share'
+    appInsights.setup().start()
     setInterval(() => {
         main()
     }, 60000)
